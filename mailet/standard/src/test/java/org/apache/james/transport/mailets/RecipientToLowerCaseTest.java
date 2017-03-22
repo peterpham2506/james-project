@@ -21,6 +21,12 @@ package org.apache.james.transport.mailets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
+import org.apache.mailet.MailAddress;
+import org.apache.mailet.Mailet;
+import org.apache.mailet.base.test.FakeMail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +40,7 @@ public class RecipientToLowerCaseTest {
     }
 
     @Test
-    public void serviceShouldPutRecipientToLowerCase() {
+    public void serviceShouldPutRecipientToLowerCase() throws AddressException, MessagingException {
         /*
         Question 1
 
@@ -42,10 +48,18 @@ public class RecipientToLowerCaseTest {
          - Process it with the mailet
          - It should have the recipient as lowerCase after processing
          */
+    	
+    	FakeMail fakemail = FakeMail.builder().recipient(new MailAddress("suuDeptrai@gmail.com")).build();
+    	testee.service(fakemail);
+    	
+    	assertThat(fakemail.getRecipients()).contains(new MailAddress("suudeptrai@gmail.com"));
+    	
+    			
+    	
     }
 
     @Test
-    public void serviceShouldHaveNoEffectWhenNoRecipient() {
+    public void serviceShouldHaveNoEffectWhenNoRecipient() throws MessagingException {
         /*
         Question 2
         
@@ -53,5 +67,13 @@ public class RecipientToLowerCaseTest {
          - Process it with the mailet
          - It should have no recipient after processing
          */
+    	
+    	FakeMail fakemail2 = FakeMail.builder().build();
+    	
+    	testee.service(fakemail2);
+    	
+    	assertThat(fakemail2.getRecipients()).isEmpty();
+    	
+    	
     }
 }
